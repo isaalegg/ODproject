@@ -1,9 +1,8 @@
 import pytorch_lightning as pl
-from transformers import DetrConfig, DetrForObjectDetection
+from transformers import DetrForObjectDetection, DetrFeatureExtractor
 import torch
 from pytorch_lightning import Trainer
-from torch.utils.data import DataLoader
-from core.dataset.dataset_process import CocoDetection
+from core.app.dataset.dataset_process import CocoDetection
 
 class Model(pl.LightningModule):
 
@@ -22,6 +21,11 @@ class Model(pl.LightningModule):
         self.lr = lr
         self.lr_backbone = lr_backbone
         self.weight_decay = weight_decay
+        self.extractor = DetrFeatureExtractor.from_pretrained("facebook/detr-resnet-50")
+
+    def preprocessing_app_input(self, img):
+        encoding_img = self.extractor(img, return_tensors="pt")
+        return encoding_img
 
     def forward(self, pixel_values, pixel_mask):
         outputs = self.model(pixel_values=pixel_values, pixel_mask=pixel_mask)
