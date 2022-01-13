@@ -1,0 +1,49 @@
+{
+	"masks":
+	{
+		"images/2.png":
+		{
+			"mask": "masks/2.png",
+			"color_categories":
+			{
+				"(0, 0, 255)": {"category": "phone", "super_category": "object"}
+			}
+		},
+		"images/3.png":
+		{
+			"mask": "masks/3.png",
+			"color_categories":
+			{
+				"(0, 0, 255)": {"category": "phone", "super_category": "object"}
+			}
+		},
+		"images/4.png":
+		{
+			"mask": "masks/4.png",
+			"color_categories":
+			{
+				"(0, 0, 255)": {"category": "phone", "super_category": "object"}
+			}
+		},
+		"images/5.png":
+		{
+			"mask": "masks/5.png",
+			"color_categories":
+			{
+				"(0, 0, 255)": {"category": "phone", "super_category": "object"}
+			}
+		},
+		"images/6.png":
+		{
+			"mask": "masks/6.png",
+			"color_categories":
+			{
+				"(0, 0, 255)": {"category": "phone", "super_category": "object"}
+			}
+		}
+	},
+	"super_categories":
+	{
+		"object": ["phone"]
+	}
+}

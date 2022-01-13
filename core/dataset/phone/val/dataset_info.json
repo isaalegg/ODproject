@@ -1,0 +1,16 @@
+{
+	"info":
+	{
+		"description": "Custom dataset",
+		"version": "1",
+		"url": "no-url/datasets.com",
+		"year": 2022,
+		"contributor": "Eren Jeager",
+		"date_created": "08/01/2022"
+	},
+	"license":{
+		"url":"no-url/licenses.com",
+		"id": 0,
+		"name": "testing"
+	}
+}

@@ -2,6 +2,7 @@ from transformers import DetrFeatureExtractor
 from torch.utils.data import DataLoader
 import numpy as np
 import os
+import torchvision
 from PIL import Image, ImageDraw
 
 
