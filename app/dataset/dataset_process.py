@@ -1,6 +1,6 @@
 from transformers import DetrFeatureExtractor
 from torch.utils.data import DataLoader
-import convert as via2coco
+
 import numpy as np
 import os
 import torchvision
@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw
 
 class ODDataset(torchvision.datasets.CocoDetection):
     def __init__(self, img_folder, train=True):
-        ann_file = os.path.join(img_folder, "custom_train.json" if train else "custom_val.json")
+        ann_file = os.path.join(img_folder, "coco_instances_more-imgs.json")
         super(ODDataset, self).__init__(img_folder, ann_file)
         self.feature_extractor = DetrFeatureExtractor.from_pretrained("facebook/detr-resnet-50")
 
@@ -26,26 +26,6 @@ class ODDataset(torchvision.datasets.CocoDetection):
 
         return pixel_values, target
 
-    def convert_format(self, selected_data):
-        self.selected_data = selected_data
-        first_class_index = 0
-
-        for keyword in ['train', 'val']:
-            input_dir = self.selected_data + keyword + '/'
-            input_json = input_dir + 'via_region_data.json'
-            categories = ['balloon']
-            super_categories = ['N/A']
-            output_json = input_dir + 'custom_' + keyword + '.json'
-
-            coco_dict = via2coco.convert(
-                imgdir=input_dir,
-                annpath=input_json,
-                categories=categories,
-                super_categories=super_categories,
-                output_file_name=output_json,
-                first_class_index=first_class_index,
-            )
-
     def collate_fn(self, batch):
         pixel_values = [item[0] for item in batch]
         encoding = self.feature_extractor.pad_and_create_pixel_mask(pixel_values, return_tensors="pt")
@@ -56,4 +36,23 @@ class ODDataset(torchvision.datasets.CocoDetection):
         batch['labels'] = labels
         return batch
 
+
+def convert_format(selected_data):
+    first_class_index = 0
+
+    for keyword in ['train', 'val']:
+        input_dir = selected_data + '/' + keyword + '/'
+        input_json = input_dir + 'via_region_data.json'
+        categories = ['balloon']
+        super_categories = ['N/A']
+        output_json = input_dir + 'custom_' + keyword + '.json'
+
+        coco_dict = via2coco.convert(
+            imgdir=input_dir,
+            annpath=input_json,
+            categories=categories,
+            super_categories=super_categories,
+            output_file_name=output_json,
+            first_class_index=first_class_index,
+        )
 
