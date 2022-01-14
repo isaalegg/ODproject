@@ -2,13 +2,13 @@ import pytorch_lightning as pl
 from transformers import DetrForObjectDetection, DetrFeatureExtractor
 import torch
 from pytorch_lightning import Trainer
-from core.app.dataset.dataset_process import CocoDetection
+
 
 class Model(pl.LightningModule):
 
-    def __init__(self, lr, lr_backbone, weight_decay):
+    def __init__(self, lr, lr_backbone, weight_decay, labelid):
         super().__init__()
-        self.id2tolabel = CocoDetection.id2label_to_model()
+        self.id2label = labelid
         self.model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50",
                                                             num_labels=len(self.id2label),
                                                             ignore_mismatched_sizes=True)
