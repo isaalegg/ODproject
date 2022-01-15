@@ -6,7 +6,15 @@ from pytorch_lightning import Trainer
 
 class Model(pl.LightningModule):
 
-    def __init__(self, lr, lr_backbone, weight_decay, labelid):
+    def __init__(
+            self,
+            lr,
+            lr_backbone,
+            weight_decay,
+            labelid,
+            train_dataloader,
+            val_dataloader
+    ):
         super().__init__()
         self.id2label = labelid
         self.model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50",
@@ -22,6 +30,8 @@ class Model(pl.LightningModule):
         self.lr_backbone = lr_backbone
         self.weight_decay = weight_decay
         self.extractor = DetrFeatureExtractor.from_pretrained("facebook/detr-resnet-50")
+        self.train_dataloader = train_dataloader
+        self.val_dataloader = val_dataloader
 
     def preprocessing_app_input(self, img):
         encoding_img = self.extractor(img, return_tensors="pt")
@@ -76,13 +86,13 @@ class Model(pl.LightningModule):
         return optimizer
 
     def train_dataloader(self):
-        return train_dataloader
+        return self.train_dataloader
     #dont worry, this and below features are defined in dataset class.
 
     def val_dataloader(self):
-        return val_dataloader
-
+        return self.val_dataloader
 
     def new_model(self):
         trainer = Trainer(gpus=1, max_steps=300, gradient_clip_val=0.1)
-        trainer.fit(model)
+        self.new_model = trainer.fit(self.model)
+        self.new_model.save_pretrained("my_imdb_model")

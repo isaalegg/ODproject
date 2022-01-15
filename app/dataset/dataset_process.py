@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw
 
 
 class ODDataset(torchvision.datasets.CocoDetection):
-    def __init__(self, img_folder, train=True):
+    def __init__(self, img_folder):
         ann_file = os.path.join(img_folder, "coco_instances_more-imgs.json")
         super(ODDataset, self).__init__(img_folder, ann_file)
         self.feature_extractor = DetrFeatureExtractor.from_pretrained("facebook/detr-resnet-50")
@@ -35,6 +35,11 @@ class ODDataset(torchvision.datasets.CocoDetection):
         batch['pixel_mask'] = encoding['pixel_mask']
         batch['labels'] = labels
         return batch
+
+    def dataloader(self, dataset):
+        dataloader = DataLoader(dataset, collate_fn=self.collate_fn, batch_size=2)
+        return dataloader
+
 
 
 def convert_format(selected_data):
