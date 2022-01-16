@@ -14,16 +14,16 @@ import matplotlib.pyplot as plt
 
 
 
-st.title('Revelio Charm')
+st.title('Object Detection App')
 
 
-losed_thing = st.radio('tell me what you lose', ['None', 'phone'])
+losed_thing = st.radio('Select dataset:', ['None', 'phone'])
 directory = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(directory, 'dataset', losed_thing)
 if not losed_thing == 'None':
     train_data = os.path.join(path, "train")
     val_data = os.path.join(path, "val")
-    st.write('we have the solution for your problem! Give us a moment.')
+    st.write('we have the dataset! Give us a moment.')
 elif losed_thing == 'None':
     st.write('select any option, please.')
 
@@ -77,11 +77,11 @@ def get_revelio_results(image, colors, model):
 COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
           [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
 
-label = 'click me'
+label = 'train model'
 if st.button(label):
     trainer = ObjectDetectionTrainer('Detr', train_path, val_path, directory)
 
-file = st.file_uploader(f"Where you think what you lose your {losed_thing}")
+file = st.file_uploader(f"give us a image")
 if file:
     im = Image.open(file)
     magic = trainer.model.funcmodel
