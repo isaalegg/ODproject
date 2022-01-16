@@ -16,7 +16,7 @@ sys.path.append(os.getcwd())
 st.title('Revelio Charm')
 
 # me esta agarrando el val, arregla eso
-losed_thing = st.radio('tell me what you lose', ['phone','balloon', 'None'])
+losed_thing = st.radio('tell me what you lose', ['None', 'phone'])
 directory = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(directory, 'dataset', losed_thing)
 if not losed_thing == 'None':
@@ -54,11 +54,12 @@ magic = Detr(
 
 
 file = st.file_uploader(f"Where you think what you lose your {losed_thing}")
-im = Image.open(file)
-clue = magic.feature_extractor(im, return_tensors="pt")
-extractor_outputs = magic.model(**clue)
-probas = extractor_outputs.logits.softmax(-1)[0, :, :-1]
-keep = probas.max(-1).values > 0.9
+if file:
+    im = Image.open(file)
+    clue = magic.feature_extractor(im, return_tensors="pt")
+    extractor_outputs = magic.model(**clue)
+    probas = extractor_outputs.logits.softmax(-1)[0, :, :-1]
+    keep = probas.max(-1).values > 0.9
 
 COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
           [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
