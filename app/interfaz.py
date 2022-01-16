@@ -1,22 +1,23 @@
+from torch.utils.data import DataLoader
+from pytorch_lightning import Trainer
+from app.magic.model import Detr
+from app.dataset.dataset_process import CocoDetection
+from app.dataset.collator import ObjectDetectionCollator
+from PIL import Image
+from datetime import datetime
 import streamlit as st
 import torch
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
-from torch.utils.data import DataLoader
-from pytorch_lightning import Trainer
-from PIL import Image
-from datetime import datetime
 import sys
 import os
 sys.path.append(os.getcwd())
-from app.magic.model import Detr
-from app.dataset.collator import ObjectDetectionCollator
-sys.path.append(os.getcwd())
+
 
 st.title('Revelio Charm')
 
-# me esta agarrando el val, arregla eso
+
 losed_thing = st.radio('tell me what you lose', ['None', 'phone'])
 directory = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(directory, 'dataset', losed_thing)
@@ -29,18 +30,18 @@ elif losed_thing == 'None':
 
 
 def id2label_to_model(data):
-    dataset = Detr(data)
+    dataset = CocoDetection(data)
     cats = dataset.coco.cats
     id2label = {k: v['name'] for k, v in cats.items()}
     return id2label
 
-def get_training_data(path):
-    train_data = os.path.join(path, "train")
-    val_data = os.path.join(path, "val")
-    train_dataset = Detr(train_data)
-    val_dataset = Detr(val_data)
-    return train_dataset, val_dataset
 
+def get_training_data(pathh):
+    t_data = os.path.join(pathh, "train")
+    v_data = os.path.join(pathh, "val")
+    t_dataset = CocoDetection(t_data)
+    v_dataset = CocoDetection(v_data)
+    return t_dataset, v_dataset
 
 labels = id2label_to_model(train_data)
 train_dataloader, val_dataloader = get_training_data(path)
@@ -54,41 +55,23 @@ magic = Detr(
 )
 
 
-file = st.file_uploader(f"Where you think what you lose your {losed_thing}")
-if file:
-    im = Image.open(file)
-    clue = magic.feature_extractor(im, return_tensors="pt")
-    extractor_outputs = magic.model(**clue)
-    probas = extractor_outputs.logits.softmax(-1)[0, :, :-1]
+def get_revelio_results(image, colors, model):
+    clue = model.feature_extractor(image, return_tensors="pt")
+    outputs = model.model(**clue)
+    probas = outputs.logits.softmax(-1)[0, :, :-1]
     keep = probas.max(-1).values > 0.9
-
-COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
-          [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
-
-
-def postprocess_outputs(outputs, img, keep):
-    target_sizes = torch.tensor(img.size[::-1]).unsqueeze(0)
+    target_sizes = torch.tensor(im.size[::-1]).unsqueeze(0)
     postprocessed_outputs = magic.feature_extractor.post_process(outputs, target_sizes)
-    bboxes_scaled = postprocessed_outputs[0]['boxes'][keep]
-    return bboxes_scaled
+    boxes = postprocessed_outputs[0]['boxes'][keep]
 
-
-pp_output = postprocess_outputs(
-    extractor_outputs,
-    im,
-    keep
-)
-
-
-def get_revelio_results(im, COLORS, prob, boxes, model):
     plt.figure(figsize=(16, 10))
-    plt.imshow(im)
+    plt.imshow(image)
     ax = plt.gca()
 
-    colors = COLORS * 100
+    colors = colors * 100
 
     # For each bbox
-    for p, (xmin, ymin, xmax, ymax), c in zip(prob, boxes.tolist(), colors):
+    for p, (xmin, ymin, xmax, ymax), c in zip(probas[keep], boxes.tolist(), colors):
         # Draw the bbox as a rectangle
         ax.add_patch(plt.Rectangle(
             (xmin, ymin),
@@ -107,28 +90,42 @@ def get_revelio_results(im, COLORS, prob, boxes, model):
         ax.text(xmin, ymin, text, fontsize=15, bbox=dict(facecolor='yellow', alpha=0.5))
 
     plt.axis('off')
-    plt.savefig('result.png' + datetime.today().strftime("%Y-%m-%d-%H-%M-%S") + ".jpg")
+    plt.savefig('result.png')
 
 
-results = get_revelio_results(im, COLORS, probas[keep], pp_output, magic)
-st.image('result.png')
+COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
+          [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
+
+file = st.file_uploader(f"Where you think what you lose your {losed_thing}")
+if file:
+    im = Image.open(file)
+    get_revelio_results(im, COLORS, magic)
+    st.image('result.png')
+
+
+def postprocess_outputs(outputs, img, keep):
+    target_sizes = torch.tensor(img.size[::-1]).unsqueeze(0)
+    postprocessed_outputs = magic.feature_extractor.post_process(outputs, target_sizes)
+    bboxes_scaled = postprocessed_outputs[0]['boxes'][keep]
+    return bboxes_scaled
+
 
 collator = ObjectDetectionCollator(magic.feature_extractor)
 train_dataset, val_dataset = get_training_data(path)
 
 train_dataloader = DataLoader(
         train_dataset,
-        collate_fn  = collator,
-        batch_size  = 2,
-        shuffle     = True,
-        num_workers = int(os.cpu_count() * 0.75),
+        collate_fn=collator,
+        batch_size=2,
+        shuffle=True,
+        num_workers=int(os.cpu_count() * 0.75),
     )
 
 val_dataloader = DataLoader(
         val_dataset,
-        collate_fn  = collator,
-        batch_size  = 2,
-        num_workers = int(os.cpu_count() * 0.75),
+        collate_fn=collator,
+        batch_size=2,
+        num_workers=int(os.cpu_count() * 0.75),
     )
 
 label = 'click me'
@@ -140,7 +137,7 @@ if st.button(label):
         labelid=labels,
         train_dataloader=train_dataloader,
         val_dataloader=val_dataloader
-)
+    )
     trainer = Trainer()
     trainer.fit(model_base)
     model_base.model.save_pretrained(os.path.join(path, "new_model"))

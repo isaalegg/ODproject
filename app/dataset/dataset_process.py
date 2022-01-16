@@ -4,7 +4,7 @@ import torchvision
 
 class CocoDetection(torchvision.datasets.CocoDetection):
 
-    def __init__(self, img_folder, feature_extractor):
+    def __init__(self, img_folder):
         # Get path image annotations
         ann_file = os.path.join(img_folder, "coco_instances_more-imgs.json")
 
@@ -12,7 +12,6 @@ class CocoDetection(torchvision.datasets.CocoDetection):
         super(CocoDetection, self).__init__(img_folder, ann_file)
 
         # Load the feature extractor
-        self.feature_extractor = feature_extractor
 
     def __getitem__(self, idx):
         # Read in PIL image and target in COCO format
