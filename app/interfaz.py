@@ -9,6 +9,7 @@ from PIL import Image
 from datetime import datetime
 import sys
 import os
+sys.path.append(os.getcwd())
 from app.magic.model import Detr
 from app.dataset.collator import ObjectDetectionCollator
 sys.path.append(os.getcwd())
