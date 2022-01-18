@@ -11,18 +11,18 @@ import matplotlib.pyplot as plt
 
 
 
-st.title('Object Detection App')
+st.title('Revelio Charm')
 
 
-losed_thing = st.radio('Select dataset:', ['None', 'phone'])
+losed_thing = st.radio('tell us what you lost', ['None', 'phone'])
 directory = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(directory, 'dataset', losed_thing)
 if not losed_thing == 'None':
     train_data = os.path.join(path, "train")
     val_data = os.path.join(path, "val")
-    st.write('we have the dataset! Give us a moment.')
+    st.write('calm down, we will find it')
 elif losed_thing == 'None':
-    st.write('select any option, please.')
+    st.write('we can not help you if you do not tell us what you lost, please.')
 
 
 def get_training_path(pathh):
@@ -85,9 +85,8 @@ if file:
     get_revelio_results(im, COLORS, magic)
     st.image('result.png')
 
-
-def postprocess_outputs(outputs, img, keep):
-    target_sizes = torch.tensor(img.size[::-1]).unsqueeze(0)
-    postprocessed_outputs = magic.feature_extractor.post_process(outputs, target_sizes)
-    bboxes_scaled = postprocessed_outputs[0]['boxes'][keep]
-    return bboxes_scaled
+@st.cache
+def get_model():
+    model_class = ObjectDetectionTrainer('Detr', train_path, val_path, directory)
+    model_instance = model_class.model
+    return model_instance
