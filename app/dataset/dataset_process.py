@@ -1,10 +1,6 @@
 import os
 import torchvision
 
-"""
-🖼 COCO dataset at the DETR format
-"""
-
 
 class CocoDetection(torchvision.datasets.CocoDetection):
 

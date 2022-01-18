@@ -4,10 +4,6 @@ from transformers import DetrConfig, DetrForObjectDetection
 
 
 class Detr(pl.LightningModule):
-    """
-    ⚡ Constructor for the DETR Object Detection Model
-    Warning: Currently support only DETR
-    """
 
     def __init__(
             self,

@@ -12,7 +12,7 @@ class ObjectDetectionCollator:
 
         # Get all the labels
         labels = [item[1] for item in batch]
-
+ 
         # Convert the data to the DETR format
         batch = {}
         batch['pixel_values'] = encoding['pixel_values']

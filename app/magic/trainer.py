@@ -1,8 +1,4 @@
 import os
-import math
-import random
-import argparse
-from pathlib import Path
 from datetime import datetime
 
 import torch
@@ -20,9 +16,6 @@ from transformers import DetrFeatureExtractor
 
 
 class ObjectDetectionTrainer:
-    """
-    🤗 Constructor for the DETR Object Detection trainer
-    """
 
     def __init__(
             self,
@@ -106,9 +99,7 @@ class ObjectDetectionTrainer:
             model_path=self.model_path,
         )
 
-        """
-        🏗️ Build the trainer
-        """
+
         self.trainer = Trainer(
             gpus=self.nbr_gpus,
             max_epochs=self.max_epochs,
@@ -118,9 +109,6 @@ class ObjectDetectionTrainer:
 
         print("Trainer builded!")
 
-        """
-        ⚙️ Train the given model on the dataset
-        """
         print("Start Training!")
 
         # Fine-tuning

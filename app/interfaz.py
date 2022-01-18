@@ -1,10 +1,7 @@
-import sys
 import os
 import sys
 sys.path.append(os.getcwd())
-from torch.utils.data import DataLoader
 from app.magic.trainer import ObjectDetectionTrainer
-from app.dataset.collator import ObjectDetectionCollator
 from PIL import Image
 import streamlit as st
 import torch
