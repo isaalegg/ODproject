@@ -21,7 +21,7 @@ class ObjectDetectionTrainer:
             self,
             model_name: str,
             train_path: str,
-            dev_path: str,
+            val_path: str,
             output_dir: str,
             lr=1e-4,
             lr_backbone=1e-5,
@@ -33,11 +33,12 @@ class ObjectDetectionTrainer:
             max_steps=1,
             nbr_gpus=0,
             model_path="facebook/detr-resnet-50",
+            start=bool,
     ):
 
         self.model_name = model_name
         self.train_path = train_path
-        self.dev_path = dev_path
+        self.val_path = val_path
         self.output_dir = output_dir
         self.lr = lr
         self.lr_backbone = lr_backbone
@@ -49,6 +50,7 @@ class ObjectDetectionTrainer:
         self.max_steps = max_steps
         self.nbr_gpus = nbr_gpus
         self.model_path = model_path
+        self.start = start
 
         # Processing device (CPU / GPU)
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -70,7 +72,7 @@ class ObjectDetectionTrainer:
         self.__openLogs()
 
         # Split and convert to dataloaders
-        self.train, self.dev, = self.__splitDatasets()
+        self.train, self.val, = self.__splitDatasets()
 
         # Get labels and build the id2label
 
@@ -85,9 +87,6 @@ class ObjectDetectionTrainer:
         print(self.id2label)
         print(self.label2id)
 
-        """
-        🏗️ Build the Model
-        """
         self.model = Detr(
             lr=self.lr,
             lr_backbone=self.lr_backbone,
@@ -106,20 +105,21 @@ class ObjectDetectionTrainer:
             max_steps=self.max_steps,
             gradient_clip_val=0.1
         )
-
         print("Trainer builded!")
 
-        print("Start Training!")
-
         # Fine-tuning
-        self.trainer.fit(self.model)
+        if self.start == True:
+            print("Start Training!")
 
-        # Save for huggingface
-        self.model.model.save_pretrained(self.output_path)
-        print("Model saved at: \033[93m" + self.output_path + "\033[0m")
+            self.trainer.fit(self.model)
 
-        # Close the logs file
-        self.logs_file.close()
+            # Save for huggingface
+            self.model.basemodel.save_pretrained(self.output_path)
+            print("Model saved at: \033[93m" + self.output_path + "\033[0m")
+
+            # Close the logs file
+            self.logs_file.close()
+
 
 
     def __openLogs(self):
@@ -151,9 +151,9 @@ class ObjectDetectionTrainer:
             feature_extractor=self.feature_extractor
         )
 
-        # Dev Dataset in the COCO format
+        # Val Dataset in the COCO format
         self.val_dataset = CocoDetection(
-            img_folder=self.dev_path,
+            img_folder=self.val_path,
             feature_extractor=self.feature_extractor
         )
 
