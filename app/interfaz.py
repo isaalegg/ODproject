@@ -81,7 +81,7 @@ if st.button(label):
 file = st.file_uploader(f"give us a image")
 if file:
     im = Image.open(file)
-    magic = trainer.model.funcmodel
+    magic = trainer.model.model
     get_revelio_results(im, COLORS, magic)
     st.image('result.png')
 

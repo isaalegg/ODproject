@@ -22,8 +22,8 @@ class Detr(pl.LightningModule):
         self.val_dl = val_dataloader
 
         # Load the base model
-        self.funcmodel = DetrForObjectDetection.from_pretrained(model_path)
-        state_dict = self.funcmodel.state_dict()
+        self.model = DetrForObjectDetection.from_pretrained(model_path)
+        state_dict = self.model.state_dict()
 
         # Remove class weights
         del state_dict["class_labels_classifier.weight"]
