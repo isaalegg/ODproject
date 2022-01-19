@@ -63,24 +63,23 @@ directory = os.path.dirname(os.path.realpath(__file__))
 if not losed_thing == 'None':
     path = os.path.join(directory, 'dataset', losed_thing)
     st.write(f'calm down, we will find your {losed_thing}')
+    train_path, val_path = get_training_path(path)
+
+    COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
+              [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
+
+    label = f'find your {losed_thing}'
+    if 'key' not in st.session_state:
+        click_there = st.button(label)
+        if click_there:
+            model_class = ObjectDetectionTrainer('Detr', train_path, val_path, directory, start=False)
+            st.session_state.key = model_class
+    else:
+        file = st.file_uploader(f"what is the last place where you saw it?")
+        if file:
+            im = Image.open(file)
+            magic = st.session_state.key
+            get_revelio_results(im, COLORS, magic)
+            st.image('result.png')
 if losed_thing == 'None':
     st.write('we can not help you if you do not tell us what you lost, please.')
-
-train_path, val_path = get_training_path(path)
-
-COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
-          [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
-
-label = f'find your {losed_thing}'
-if 'key' not in st.session_state:
-    click_there = st.button(label)
-    if click_there:
-        model_class = ObjectDetectionTrainer('Detr', train_path, val_path, directory, start=False)
-        st.session_state.key = model_class.model.model
-else:
-    file = st.file_uploader(f"what is the last place where you saw it?")
-    if file:
-        im = Image.open(file)
-        magic = st.session_state.key
-        get_revelio_results(im, COLORS, magic)
-        st.image('result.png')
