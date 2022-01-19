@@ -19,14 +19,29 @@ def get_training_path(pathh):
     return t_path, v_path
 
 
+def box_cxcywh_to_xyxy(x):
+    x_c, y_c, w, h = x.unbind(1)
+    b = [(x_c - 0.5 * w), (y_c - 0.5 * h),
+         (x_c + 0.5 * w), (y_c + 0.5 * h)]
+    return torch.stack(b, dim=1)
+
+
+def rescale_bboxes(out_bbox, size):
+    img_w, img_h = size
+    b = box_cxcywh_to_xyxy(out_bbox)
+    b = b * torch.tensor([img_w, img_h, img_w, img_h], dtype=torch.float32)
+    return b
+
+
 def get_revelio_results(image, colors, model):
     clue = model.feature_extractor(image, return_tensors="pt")
     outputs = model.model(**clue)
     probas = outputs.logits.softmax(-1)[0, :, :-1]
-    keep = probas.max(-1).values > 0.9
-    target_sizes = torch.tensor(im.size[::-1]).unsqueeze(0)
-    postprocessed_outputs = model.feature_extractor.post_process(outputs, target_sizes)
-    boxes = postprocessed_outputs[0]['boxes'][keep]
+    keep = probas.max(-1).values > 0.
+    boxes = rescale_bboxes(
+        outputs.pred_boxes[0, keep].cpu(),
+        image.size
+        )
 
     plt.figure(figsize=(16, 10))
     plt.imshow(image)
@@ -35,7 +50,7 @@ def get_revelio_results(image, colors, model):
     colors = colors * 100
 
     # For each bbox
-    for p, (xmin, ymin, xmax, ymax), c in zip(probas[keep], boxes.tolist(), colors):
+    for p, (xmin, ymin, xmax, ymax), c in zip(probas, boxes.tolist(), colors):
         # Draw the bbox as a rectangle
         ax.add_patch(plt.Rectangle(
             (xmin, ymin),
@@ -50,11 +65,11 @@ def get_revelio_results(image, colors, model):
         cl = p.argmax()
 
         # Draw the label
-        text = f'{model.id2label[cl.item()]}: {p[cl]:0.2f}'
+        text = f'{model.model.model.config.id2label[cl.item()]}: {p[cl]:0.2f}'
         ax.text(xmin, ymin, text, fontsize=15, bbox=dict(facecolor='yellow', alpha=0.5))
 
     plt.axis('off')
-    plt.savefig('result.png')
+    plt.savefig("result.png")
 
 
 losed_thing = st.radio('tell us what you lost', ['None', 'phone'])
