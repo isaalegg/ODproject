@@ -5,6 +5,7 @@ Pillow
 torchmetrics
 tqdm
 torchvision
+pycocotools
 pytorch_lightning
 opencv-python
 matplotlib
