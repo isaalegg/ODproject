@@ -113,7 +113,6 @@ py==1.9.0
 pyarrow==6.0.1
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
-pycocotools-windows
 pycparser==2.21
 pydeck==0.7.1
 pyDeprecate==0.3.1
