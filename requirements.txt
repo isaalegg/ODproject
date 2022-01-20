@@ -6,6 +6,7 @@ torchmetrics
 tqdm
 torchvision
 pycocotools
+timm
 pytorch_lightning
 opencv-python
 matplotlib
