@@ -72,18 +72,18 @@ def get_revelio_results(image, colors, model):
     plt.savefig("result.png")
 
 
-losed_thing = st.radio('tell us what you lost', ['None', 'phone'])
+lost_thing = st.radio('tell us what you lost', ['None', 'phone'])
 directory = os.path.dirname(os.path.realpath(__file__))
 
-if not losed_thing == 'None':
-    path = os.path.join(directory, 'dataset', losed_thing)
-    st.write(f'calm down, we will find your {losed_thing}')
+if not lost_thing == 'None':
+    path = os.path.join(directory, 'dataset', lost_thing)
+    st.write(f'calm down, we will find your {lost_thing}')
     train_path, val_path = get_training_path(path)
 
     COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
               [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
 
-    label = f'find your {losed_thing}'
+    label = f'find your {lost_thing}'
     if 'key' not in st.session_state:
         click_there = st.button(label)
         if click_there:
@@ -96,5 +96,5 @@ if not losed_thing == 'None':
             magic = st.session_state.key
             get_revelio_results(im, COLORS, magic)
             st.image('result.png')
-if losed_thing == 'None':
+if lost_thing == 'None':
     st.write('we can not help you if you do not tell us what you lost, please.')
