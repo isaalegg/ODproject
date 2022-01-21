@@ -92,17 +92,17 @@ if user == 'isabel':
                           [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
 
                 label = f'find your {lost_thing}'
-                if 'key' not in st.session_state:
+                if 'model' not in st.session_state:
                     click_there = st.button(label)
                     if click_there:
                         model_class = ObjectDetectionTrainer('Detr', train_path, val_path, directory, start=False)
-                        st.session_state.key = model_class
+                        st.session_state.model = model_class
                 else:
                     with st.container():
                         file = st.file_uploader(f"what is the last place where you saw it?")
                         if file:
                             im = Image.open(file)
-                            magic = st.session_state.key
+                            magic = st.session_state.model
                             get_revelio_results(im, COLORS, magic)
                             st.image('result.png')
             if lost_thing == 'None':
