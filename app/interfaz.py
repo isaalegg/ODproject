@@ -109,5 +109,7 @@ if user == 'isabel':
                             st.image('result.png')
             if lost_thing == 'None':
                 st.caption('we can not help you if you do not tell us what you lost, please.')
-else:
-    st.subheader('username is not valid')
+if not user == 'isabel':
+    st.caption('username is not valid.')
+    if not password == '123456':
+        st.caption('username and password are not valid.')
