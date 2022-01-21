@@ -76,8 +76,6 @@ with st.container():
     st.subheader('Log in', anchor=None)
     user = st.text_input('User', type="default")
     password = st.text_input('Password', type="password")
-    st.session_state.key = user
-    st.session_state.key = password
 
 if user == 'isabel':
     if password == '123456':
