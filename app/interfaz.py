@@ -4,7 +4,6 @@ sys.path.append(os.getcwd())
 from app.magic.trainer import ObjectDetectionTrainer
 from PIL import Image
 import streamlit as st
-from datetime import datetime
 import torch
 import matplotlib
 matplotlib.use('agg')
@@ -73,10 +72,11 @@ def get_revelio_results(image, colors, model):
     os.remove("result.png")
     plt.savefig("result.png")
 
+
 if 'default_package' not in st.session_state:
-    default_user= 'isabel'
+    default_user = 'isabel'
     default_password= '123456'
-    default_package = [default_user,default_password]
+    default_package = [default_user, default_password]
     st.session_state.default_package = default_package
 
 if 'package' not in st.session_state:
@@ -84,7 +84,7 @@ if 'package' not in st.session_state:
     user = st.text_input('User', type="default")
     password = st.text_input('Password', type="password")
     login = st.button("log in", key=None)
-    package = [user,password]
+    package = [user, password]
     if login:
         st.session_state.package = package
 
@@ -117,5 +117,5 @@ if st.session_state.package == st.session_state.default_package:
                             st.image("result.png")
             if lost_thing == 'None':
                 st.caption('we can not help you if you do not tell us what you lost, please.')
-else:
+if not st.session_state.package == st.session_state.default_package:
     st.write('please, introduce a user and password valid.')
