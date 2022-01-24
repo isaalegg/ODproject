@@ -4,6 +4,7 @@ sys.path.append(os.getcwd())
 from app.magic.trainer import ObjectDetectionTrainer
 from PIL import Image
 import streamlit as st
+from datetime import datetime
 import torch
 import matplotlib
 matplotlib.use('agg')
@@ -69,6 +70,7 @@ def get_revelio_results(image, colors, model):
         ax.text(xmin, ymin, text, fontsize=15, bbox=dict(facecolor='yellow', alpha=0.5))
 
     plt.axis('off')
+    os.remove("result.png")
     plt.savefig("result.png")
 
 if 'default_package' not in st.session_state:
@@ -99,7 +101,7 @@ if st.session_state.package == st.session_state.default_package:
                 COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
                           [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
 
-                label = f'find your {lost_thing}'
+                label = f'donwload the object detection model'
                 if 'model' not in st.session_state:
                     click_there = st.button(label)
                     if click_there:
@@ -112,7 +114,7 @@ if st.session_state.package == st.session_state.default_package:
                             im = Image.open(file)
                             magic = st.session_state.model
                             get_revelio_results(im, COLORS, magic)
-                            st.image('result.png')
+                            st.image("result.png")
             if lost_thing == 'None':
                 st.caption('we can not help you if you do not tell us what you lost, please.')
 else:
