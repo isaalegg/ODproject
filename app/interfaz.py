@@ -71,14 +71,22 @@ def get_revelio_results(image, colors, model):
     plt.axis('off')
     plt.savefig("result.png")
 
+if 'default_package' not in st.session_state:
+    default_user= 'isabel'
+    default_password= '123456'
+    default_package = [default_user,default_password]
+    st.session_state.default_package = default_package
 
-with st.container():
+if 'package' not in st.session_state:
     st.subheader('Log in', anchor=None)
     user = st.text_input('User', type="default")
     password = st.text_input('Password', type="password")
+    login = st.button("log in", key=None)
+    package = [user,password]
+    if login:
+        st.session_state.package = package
 
-if user == 'isabel':
-    if password == '123456':
+if st.session_state.package == st.session_state.default_package:
         with st.container():
             lost_thing = st.radio('tell us what you lost', ['None', 'phone'])
             directory = os.path.dirname(os.path.realpath(__file__))
@@ -107,3 +115,5 @@ if user == 'isabel':
                             st.image('result.png')
             if lost_thing == 'None':
                 st.caption('we can not help you if you do not tell us what you lost, please.')
+else:
+    st.write('please, introduce a user and password valid.')
