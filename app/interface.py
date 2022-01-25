@@ -89,9 +89,8 @@ with placeholder.container():
     package = {'name':user, 'pas':password}
     if st.button("log in", key=None):
         st.session_state.package = package
-        placeholder.empty()
-placeholder = st.empty()
 if st.session_state.package == st.session_state.default_package:
+    placeholder.empty()
     lost_thing = st.radio('tell us what you lost', ['None', 'phone'])
     directory = os.path.dirname(os.path.realpath(__file__))
 
@@ -120,6 +119,6 @@ if st.session_state.package == st.session_state.default_package:
     if lost_thing == 'None':
         st.caption('we can not help you if you do not tell us what you lost, please.')
 elif not st.session_state.package == 'value':
-    placeholder.write('please, introduce a user and password valid.')
+    st.write('please, introduce a user and password valid.')
 
 
