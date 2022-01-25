@@ -80,15 +80,16 @@ if 'default_package' not in st.session_state:
     st.session_state.default_package = default_package
 
 if 'package' not in st.session_state:
-    placeholder = st.empty()
-    with placeholder.container():
-        st.subheader('Log in', anchor=None)
-        user = st.text_input('User', type="default")
-        password = st.text_input('Password', type="password")
-        package = {'name':user, 'pas':password}
-        if st.button("log in", key=None):
-            st.session_state.package = package
-            placeholder.empty()
+    st.session_state.package = 'value'
+placeholder = st.empty()
+with placeholder.container():
+    st.subheader('Log in', anchor=None)
+    user = st.text_input('User', type="default")
+    password = st.text_input('Password', type="password")
+    package = {'name':user, 'pas':password}
+    if st.button("log in", key=None):
+        st.session_state.package = package
+        placeholder.empty()
 placeholder = st.empty()
 if st.session_state.package == st.session_state.default_package:
     lost_thing = st.radio('tell us what you lost', ['None', 'phone'])
@@ -118,7 +119,7 @@ if st.session_state.package == st.session_state.default_package:
                     st.image("result.png")
     if lost_thing == 'None':
         st.caption('we can not help you if you do not tell us what you lost, please.')
-else:
+elif not st.session_state.package == 'value':
     placeholder.write('please, introduce a user and password valid.')
 
 
