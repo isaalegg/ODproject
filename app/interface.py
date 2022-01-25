@@ -76,7 +76,7 @@ def get_revelio_results(image, colors, model):
 if 'default_package' not in st.session_state:
     default_user = 'isabel'
     default_password= '123456'
-    default_package = [default_user, default_password]
+    default_package = {'name': default_user, 'pas': default_password}
     st.session_state.default_package = default_package
 
 if 'package' not in st.session_state:
@@ -85,7 +85,7 @@ if 'package' not in st.session_state:
         st.subheader('Log in', anchor=None)
         user = st.text_input('User', type="default")
         password = st.text_input('Password', type="password")
-        package = [user, password]
+        package = {'name':user, 'pas':password}
         if st.button("log in", key=None):
             st.session_state.package = package
             placeholder.empty()
