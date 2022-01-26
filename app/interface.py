@@ -72,7 +72,7 @@ def get_revelio_results(image, colors, model):
 
 def credentials(name, password):
     user = {'name': name, 'pas': password}
-    st.session_state.package = user
+    st.session_state.user = user
     print('User credentials are already stored.')
 
 
@@ -90,20 +90,20 @@ def download_model(train_path, val_path, directory):
 
 st.title('Revelio Charm')
 
-if 'default_package' not in st.session_state:
-    default_user = 'isabel'
+if 'default_user' not in st.session_state:
+    default_name = 'isabel'
     default_password = '123456'
-    default_package = {'name': default_user, 'pas': default_password}
-    st.session_state.default_package = default_package
+    default_user = {'name': default_name, 'pas': default_password}
+    st.session_state.default_user = default_user
 
-if 'package' not in st.session_state:
-    st.session_state.package = 'value'
+if 'user' not in st.session_state:
+    st.session_state.user = 'value'
 placeholder = st.empty()
 with placeholder.container():
     st.subheader('Log in', anchor=None)
-    user = st.text_input('User', type="default")
+    name = st.text_input('User', type="default")
     password = st.text_input('Password', type="password")
-    st.button("log in", on_click=credentials, args=(user, password, ))
+    st.button("log in", on_click=credentials, args=(name, password, ))
 
 
 def presstoinference():
@@ -111,7 +111,7 @@ def presstoinference():
     print('results are displayed')
 
 
-if st.session_state.package == st.session_state.default_package:
+if st.session_state.user == st.session_state.default_user:
     placeholder.empty()
     lost_thing = st.radio('tell us what you lost', ['None', 'phone'])
     directory = os.path.dirname(os.path.realpath(__file__))
@@ -135,5 +135,5 @@ if st.session_state.package == st.session_state.default_package:
                 st.image("result.png")
     else:
         st.caption('we can not help you if you do not tell us what you lost, please.')
-elif not st.session_state.package == 'value':
+elif not st.session_state.user == 'value':
     st.write('please, introduce a user and password valid.')
