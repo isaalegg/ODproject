@@ -73,6 +73,7 @@ def get_revelio_results(image, colors, model):
 def credentials(name, password):
     user = {'name': name, 'pas': password}
     st.session_state.package = user
+    print('User credentials are already stored.')
 
 
 def download_model(train_path, val_path, directory):
@@ -84,7 +85,7 @@ def download_model(train_path, val_path, directory):
         start=False
     )
     st.session_state.model = model
-    st.caption('the model is already downloaded')
+    print('the model is already downloaded')
 
 
 def presstoinference(im, colors, model):
