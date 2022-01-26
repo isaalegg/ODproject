@@ -88,11 +88,6 @@ def download_model(train_path, val_path, directory):
     print('the model is already downloaded')
 
 
-def presstoinference(im, colors, model):
-    get_revelio_results(im, colors, model)
-    result = st.image("result.png")
-    return result
-
 st.title('Revelio Charm')
 
 if 'default_package' not in st.session_state:
@@ -109,6 +104,13 @@ with placeholder.container():
     user = st.text_input('User', type="default")
     password = st.text_input('Password', type="password")
     st.button("log in", on_click=credentials, args=(user, password, ))
+
+
+def presstoinference():
+    st.image("result.png")
+    print('results are displayed')
+
+
 if st.session_state.package == st.session_state.default_package:
     placeholder.empty()
     lost_thing = st.radio('tell us what you lost', ['None', 'phone'])
@@ -126,13 +128,12 @@ if st.session_state.package == st.session_state.default_package:
         if 'model' not in st.session_state:
             st.button(label, on_click=download_model, args=(train_path, val_path, directory, ))
         else:
-            with st.container():
-                file = st.file_uploader(f"what is the last place where you saw it?")
-                if file:
-                    im = Image.open(file)
-                    get_revelio_results(im, COLORS, st.session_state.model)
-                    st.image("result.png")
-    if lost_thing == 'None':
+            file = st.file_uploader(f"what is the last place where you saw it?")
+            if file:
+                im = Image.open(file)
+                get_revelio_results(im, COLORS, st.session_state.model)
+                st.image("result.png")
+    else:
         st.caption('we can not help you if you do not tell us what you lost, please.')
 elif not st.session_state.package == 'value':
     st.write('please, introduce a user and password valid.')
